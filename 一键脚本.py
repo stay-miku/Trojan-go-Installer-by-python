@@ -71,10 +71,10 @@ def install():
         trojan_config = trojan_config.replace("$remote_ip", "127.0.0.1").replace("$remote_port", "80")
     else:
         trojan_config = trojan_config.replace("$remote_ip", remote_ip).replace("$remote_port", remote_port)
-    trojan_password = os.popen("openssl rand -base64 20").readline()[:-2]
+    trojan_password = os.popen("openssl rand -base64 20").readline().replace("/", "").replace("=", "")
     trojan_config = trojan_config.replace("$password", trojan_password)
     if ws_able:
-        trojan_ws_path = os.popen("openssl rand -base64 10").readline()[:-2]
+        trojan_ws_path = os.popen("openssl rand -base64 10").readline().replace("/", "").replace("=", "")
         trojan_config = trojan_config.replace("$ws_able", "true")
         trojan_config = trojan_config.replace("$path", trojan_ws_path)
     else:
