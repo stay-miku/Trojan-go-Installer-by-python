@@ -35,6 +35,14 @@ def install():
     os.system("wget -P /root -O trojan.zip " + trojan_download_url)
     print("解压压缩包...")
     os.system("mkdir /etc/trojan")
+
+    # 依赖问题
+    os.system("apt install unzip -y")
+    os.system("apt install curl -y")
+    os.system("apt install ufw -y")
+    os.system("ufw enable")
+    os.system("ufw allow 22")
+
     os.system("unzip -d /etc/trojan /root/trojan.zip")
     trojan_config = """{
     "run_type": "server",
@@ -87,7 +95,9 @@ def install():
     acme_email = "root@" + local_domain
     os.system("acme.sh --register-account -m $email".replace("$email", acme_email))
     os.system("acme.sh  --issue -d $domain --standalone -k ec-256".replace("$domain", local_domain))
-    os.system("acme.sh --installcert -d $domain --ecc --key-file /etc/trojan/server.key  --fullchain-file /etc/trojan/server.crt".replace("$domain", local_domain))
+    os.system(
+        "acme.sh --installcert -d $domain --ecc --key-file /etc/trojan/server.key  --fullchain-file /etc/trojan/server.crt".replace(
+            "$domain", local_domain))
     print("证书安装完毕")
 
     print("配置service...")
@@ -139,9 +149,11 @@ WantedBy=multi-user.target"""
     print("trojan启动成功,输入systemctl status trojan查看状态,输入systemctl restart trojan重启")
 
     if ws_able:
-        trojan_link = "trojan://$password@$domain:443?security=tls&sni=$domain&type=ws&host=$domain&path=%2F$path#trojan_$domain".replace("$domain", local_domain).replace("$password", trojan_password).replace("$path", trojan_ws_path)
+        trojan_link = "trojan://$password@$domain:443?security=tls&sni=$domain&type=ws&host=$domain&path=%2F$path#trojan_$domain".replace(
+            "$domain", local_domain).replace("$password", trojan_password).replace("$path", trojan_ws_path)
     else:
-        trojan_link = "trojan://$password@$domain:443?security=tls&sni=$domain&type=tcp&headerType=none&host=$domain#trojan_$domain".replace("$domain", local_domain).replace("$password", trojan_password)
+        trojan_link = "trojan://$password@$domain:443?security=tls&sni=$domain&type=tcp&headerType=none&host=$domain#trojan_$domain".replace(
+            "$domain", local_domain).replace("$password", trojan_password)
 
     print("订阅地址:" + trojan_link)
     if local_web:
