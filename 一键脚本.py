@@ -155,8 +155,28 @@ WantedBy=multi-user.target"""
         trojan_link = "trojan://$password@$domain:443?security=tls&sni=$domain&type=tcp&headerType=none&host=$domain#trojan_$domain".replace(
             "$domain", local_domain).replace("$password", trojan_password)
 
-    print("订阅地址:" + trojan_link)
+    print("trojan链接:" + trojan_link)
+    link_path = os.popen("openssl rand -base64 10").readline().replace("/", "").replace("=", "").replace("\n", "")
+    os.mkdir("/var/www/trojan/" + link_path)
     if local_web:
+        if ws_able:
+            wsf = open("/var/www/trojan/" + link_path + "/wslink.html", "w")
+            wsf.write(trojan_link)
+            wsf.close()
+            tlf = open("/var/www/trojan/" + link_path + "/trojanlink.html", "w")
+            tlf.write(
+                "trojan://$password@$domain:443?security=tls&sni=$domain&type=tcp&headerType=none&host=$domain#trojan_$domain".replace(
+                    "$domain", local_domain).replace("$password", trojan_password))
+            tlf.close()
+            print(
+                "你也可以在https://$domain/$path/wslink.html获取使用了websocket的trojan链接,或在https://$domain/$path/trojanlink.html获取到不使用websocket的trojan链接(trojan-go启用websocket后客户端即使不使用websocket也可以连接上服务端)".replace(
+                    "$domain", local_domain).replace("$path", link_path))
+        else:
+            tlf = open("/var/www/trojan/" + link_path + "/trojanlink.html", "w")
+            tlf.write(trojan_link)
+            tlf.close()
+            print("你也可以在https://$domain/$path/trojanlink.html获取到trojan链接".replace("$domain", local_domain).replace(
+                "$path", link_path))
         print("网站根目录为:/var/www/trojan,请在该目录下存放网站文件")
 
 
