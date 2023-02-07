@@ -71,10 +71,10 @@ def install():
         trojan_config = trojan_config.replace("$remote_ip", "127.0.0.1").replace("$remote_port", "80")
     else:
         trojan_config = trojan_config.replace("$remote_ip", remote_ip).replace("$remote_port", remote_port)
-    trojan_password = os.popen("openssl rand -base64 20").readline().replace("/", "").replace("=", "").replace("\n", "")
+    trojan_password = os.popen("openssl rand -base64 24").readline().replace("/", "").replace("=", "").replace("\n", "").replace("+", "")
     trojan_config = trojan_config.replace("$password", trojan_password)
     if ws_able:
-        trojan_ws_path = os.popen("openssl rand -base64 10").readline().replace("/", "").replace("=", "").replace("\n", "")
+        trojan_ws_path = os.popen("openssl rand -base64 12").readline().replace("/", "").replace("=", "").replace("\n", "").replace("+", "")
         trojan_config = trojan_config.replace("$ws_able", "true")
         trojan_config = trojan_config.replace("$path", trojan_ws_path)
     else:
@@ -156,7 +156,7 @@ WantedBy=multi-user.target"""
             "$domain", local_domain).replace("$password", trojan_password)
 
     print("trojan链接:" + trojan_link)
-    link_path = os.popen("openssl rand -base64 10").readline().replace("/", "").replace("=", "").replace("\n", "")
+    link_path = os.popen("openssl rand -base64 10").readline().replace("/", "").replace("=", "").replace("\n", "").replace("+", "")
     os.mkdir("/var/www/trojan/" + link_path)
     if local_web:
         if ws_able:
